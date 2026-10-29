@@ -1,3 +1,4 @@
+import {readFile} from 'node:fs/promises';
 import {constantEqual,makeSession,validSession,validateTemplate,templateHash,dayIST,verifyUnsubscribe,workWindow} from '../lib/core.mjs';
 import {store} from '../lib/store.mjs';
 import {connections,assertResearchReady,enqueue,work} from '../lib/worker.mjs';
@@ -9,6 +10,13 @@ function originOkay(req){if(!req.headers.origin)return false;try{const given=new
 export default async function handler(req,res){
   const url=new URL(req.url,'http://localhost'),action=url.searchParams.get('action')||'status';
   try {
+    if(action==='workspace'){
+      if(req.method!=='GET')return response(res,405,{error:'Method not allowed.'});
+      const cookie=req.headers.cookie?.split(';').map(x=>x.trim()).find(x=>x.startsWith('smith_session='))?.slice(14);
+      const signedIn=connections().login&&validSession(cookie||'',process.env.SESSION_SECRET);
+      const page=await readFile(new URL(signedIn?'../views/dashboard.html':'../views/login.html',import.meta.url),'utf8');
+      res.statusCode=200;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','private, no-store');res.setHeader('X-Robots-Tag','noindex, nofollow');res.end(page);return;
+    }
     if(action==='unsubscribe'){
       const id=verifyUnsubscribe(url.searchParams.get('token'),process.env.SESSION_SECRET||'');if(!process.env.SESSION_SECRET||!id)return response(res,400,{error:'This unsubscribe link is invalid.'});
       if(req.method==='GET'){res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');res.end('<!doctype html><title>Unsubscribe — Sunrise Tech Origin</title><h1>Stop promotional emails?</h1><p>Confirm below to stop future outreach from Sunrise Tech Origin.</p><form method="POST"><button>Unsubscribe</button></form>');return;}
@@ -28,7 +36,7 @@ export default async function handler(req,res){
     if(action==='login'){
       if(req.method!=='POST'||!originOkay(req))return response(res,403,{error:'Invalid request origin.'});const data=await body(req);
       // Use a high-entropy passphrase and Vercel firewall rate limiting at the edge.
-      if(!constantEqual(String(data.password||''),process.env.ADMIN_PASSWORD))return response(res,401,{error:'Incorrect workspace passphrase.'});
+      if(!constantEqual(String(data.username||''),process.env.ADMIN_USERNAME||'')||!constantEqual(String(data.password||''),process.env.ADMIN_PASSWORD))return response(res,401,{error:'Incorrect user ID or password.'});
       res.setHeader('Set-Cookie',`smith_session=${makeSession(process.env.SESSION_SECRET)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${secure()?'; Secure':''}`);return response(res,200,{ok:true});
     }
     const cookie=req.headers.cookie?.split(';').map(x=>x.trim()).find(x=>x.startsWith('smith_session='))?.slice(14);

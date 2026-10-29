@@ -66,7 +66,7 @@ document.addEventListener('click',async e=>{const lead=e.target.closest('[data-l
   if(action==='export')exportLeads();
   if(action==='clear-filters'){query='';category='';leadStatus='';render();}
   if(action==='login')$('#login-dialog').showModal();
-  if(action==='logout'){await api('logout',{});mode='preview';state=sampleState();render();}
+  if(action==='logout'){await api('logout',{});location.replace('/');mode='preview';state=sampleState();render();}
   if(action==='reset-preview'){localStorage.removeItem('smith-preview-v1');state=sampleState();render();toast('Preview reset. Only fictional data is shown.');}
   if(action==='run'){if(mode==='preview'){toast('Preview does not run research. Connect the live workspace to start.');navigate('settings');}else{b.disabled=true;await api('run',{});await loadLive();toast('Research queued. Progress will appear in Run history.');}}
   if(action==='toggle-research'){if(mode==='preview')return toast('Research remains off in preview. Configure live connections first.');await api('pause',{active:!state.settings.active});await loadLive();toast(state.settings.active?'Daily research enabled.':'Research paused.');}
@@ -76,7 +76,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('#s
 $('#menu-toggle').onclick=()=>$('#sidebar').classList.toggle('open');
 $('#live-login').onclick=async()=>{if(mode==='live'){try{await loadLive();toast('Workspace refreshed.');}catch(err){toast(err.message);}}else $('#login-dialog').showModal();};
 $('#close-login').onclick=()=>$('#login-dialog').close();
-$('#login-form').onsubmit=async e=>{e.preventDefault();$('#login-error').textContent='';try{await api('login',{password:$('#password').value});$('#password').value='';await loadLive();$('#login-dialog').close();toast('Signed in to the live workspace.');}catch(err){$('#login-error').textContent=err.message;}};
+$('#login-form').onsubmit=async e=>{e.preventDefault();$('#login-error').textContent='';try{await api('login',{username:$('#username').value,password:$('#password').value});$('#password').value='';await loadLive();$('#login-dialog').close();toast('Signed in to the live workspace.');}catch(err){$('#login-error').textContent=err.message;}};
 window.addEventListener('hashchange',()=>{query='';category='';leadStatus='';render();window.scrollTo({top:0,behavior:'instant'});});
 render();
 try{const status=await api('status');connections=status.connections;try{if(connections.login)await loadLive();else render();}catch{render();}}catch{}

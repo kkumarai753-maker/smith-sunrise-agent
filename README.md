@@ -11,3 +11,5 @@ Brave currently advertises $5 monthly Search credits at $5/1,000 requests. Activ
 Source updated and locally tested. This package has not been deployed or activated. Live launch still needs the updated Apps Script bridge, Google authorization, secure search credentials with suitable storage rights, hosting and queue/scheduler verification. Existing Google Sheet formatting and remarks are untouched by this local update.
 
 See DEPLOYMENT.md for the earlier infrastructure guide; its OpenAI and outreach requirements apply to the previous version and are superseded above.
+
+Workspace access: root and /index.html are served through an authenticated handler. ADMIN_USERNAME and ADMIN_PASSWORD are required. Dashboard HTML is private in views/, outside public/.

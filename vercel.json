@@ -4,10 +4,21 @@
   "functions": {
     "api/index.mjs": {
       "maxDuration": 180,
-      "includeFiles": "public/email-assets/**"
+      "includeFiles": [
+        "public/email-assets/**",
+        "views/**"
+      ]
     }
   },
   "rewrites": [
+    {
+      "source": "/",
+      "destination": "/api/index?action=workspace"
+    },
+    {
+      "source": "/index.html",
+      "destination": "/api/index?action=workspace"
+    },
     {
       "source": "/api/worker",
       "destination": "/api/index?action=worker"

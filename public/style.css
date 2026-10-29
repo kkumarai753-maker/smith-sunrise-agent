@@ -12,3 +12,5 @@
 .email-picture-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0 24px}.email-picture-grid img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:6px}.email-picture-grid span{display:block;font-size:9px;color:var(--muted);margin-top:7px}
 
 .brand{flex-direction:column;align-items:flex-start;gap:12px;padding-bottom:24px}.brand .company-logo{display:block;width:190px;height:150px;object-fit:contain;background:#fff;border-radius:8px}.brand>span{font-size:24px}.brand small{display:none}
+
+.brand .company-logo{background:transparent;border-radius:0}.sidebar .brand{background:#edf3fa;color:#172b46;margin:-32px -20px 24px;padding:20px 26px 18px}.sidebar .brand-dot{color:#c88021}
