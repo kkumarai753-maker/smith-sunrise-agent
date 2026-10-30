@@ -13,3 +13,9 @@ Source updated and locally tested. This package has not been deployed or activat
 See DEPLOYMENT.md for the earlier infrastructure guide; its OpenAI and outreach requirements apply to the previous version and are superseded above.
 
 Workspace access: root and /index.html are served through an authenticated handler. ADMIN_USERNAME and ADMIN_PASSWORD are required. Dashboard HTML is private in views/, outside public/.
+
+## Tavily search setup
+
+The default search provider is Tavily. Create a free account at https://app.tavily.com and put its key in Vercel as TAVILY_API_KEY (Production); set SEARCH_PROVIDER=tavily and redeploy. Never commit the key. Basic search is explicitly selected, with automatic parameter upgrades disabled. One request returns at most ten results; Tavily has no offset pagination, so the planner advances to the next segment. The existing 30 requests/day and 900/month application caps remain in place; these are search budgets, not guaranteed lead counts. Provider credit limits also apply.
+
+SEARCH_STORAGE_RIGHTS_CONFIRMED remains a separate prerequisite; confirm applicable provider terms before enabling stored discovery. Sheet and queue credentials are still needed for an end-to-end run. To use Brave instead, explicitly set SEARCH_PROVIDER=brave and supply BRAVE_SEARCH_API_KEY.
